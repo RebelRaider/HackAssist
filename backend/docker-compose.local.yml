@@ -1,0 +1,21 @@
+version: "3"
+services:
+  postgres:
+    build:
+      context: ./.docker/postgres
+      dockerfile: ./Dockerfile
+    container_name: postgres
+    volumes:
+      - postgres_storage:/var/lib/postgresql/data
+    env_file:
+      - .docker/.env
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_storage:

@@ -1,0 +1,122 @@
+services:
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    container_name: backend
+    depends_on:
+      - postgres
+      - ch_server
+    command: >
+      bash -c "uvicorn app:app --host 0.0.0.0 --port 8000"
+    networks:
+      - backend_network
+      - ch_ntw
+    ports:
+      - "8000:8000"
+
+  postgres:
+    build:
+      context: .docker/postgres
+      dockerfile: Dockerfile
+    container_name: postgres
+    volumes:
+      - postgres_storage:/var/lib/postgresql/data
+    env_file:
+      - .docker/.env
+    ports:
+      - "5432:5432"
+    networks:
+      - backend_network
+
+  frontend:
+    build:
+      context: rosdornii-web
+      dockerfile: Dockerfile
+    container_name: frontend
+    command: >
+      bash -c "npm run dev"
+    volumes:
+      - frontend_volume:/app/dist
+    networks:
+      - frontend_network
+    ports:
+      - "3000:3000"
+
+  # nginx:
+  #   build:
+  #     context: .docker/nginx/
+  #     dockerfile: Dockerfile
+  #   container_name: nginx
+  #   volumes:
+  #     - /etc/letsencrypt:/etc/letsencrypt
+  #     - frontend_volume:/usr/share/nginx/html
+  #   env_file:
+  #     - .docker/.env
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   networks:
+  #     - frontend_network
+  #     - backend_network
+
+  ch_server:
+    image: yandex/clickhouse-server
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    volumes:
+      - ./clickhouse/db:/var/lib/clickhouse
+    networks:
+      - ch_ntw
+
+  ch_client:
+    image: yandex/clickhouse-client:latest
+    entrypoint:
+      - /bin/sleep
+    depends_on:
+      - ch_server
+    links:
+      - ch_server
+    command: 
+      - infinity
+    networks:
+      - ch_ntw
+
+  assistant:
+    build:
+      context: assistant
+      dockerfile: Dockerfile
+    container_name: assistant
+    depends_on:
+      - ch_server
+    networks:
+      - ch_ntw
+    volumes:
+      - ./assistant:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: ["python3", "Assistant.py"]
+
+networks:
+  ch_ntw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.222.1.0/24
+  frontend_network:
+    driver: bridge
+  backend_network:
+    driver: bridge
+
+volumes:
+  postgres_storage:
+  frontend_volume:

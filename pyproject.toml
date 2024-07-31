@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "fintech"
+version = "0.1.0"
+description = ""
+authors = ["kirill <shkolenko02-03-2004@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.103.0"}
+alembic = "^1.11.3"
+loguru = "^0.7.0"
+ruff = "^0.3.7"
+pre-commit = "^3.7.0"
+psycopg2-binary = "^2.9.9"
+sqlalchemy-utils = "^0.41.2"
+asyncpg = "^0.29.0"
+pytest = "^8.2.0"
+llama-cpp-python = "^0.2.74"
+transformers = "^4.40.2"
+openai-whisper = "^20231117"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+exclude = ["models/__init__.py"]

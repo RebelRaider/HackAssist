@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "server": "localhost",
+            "port": 8123,
+            "useHTTPS": false,
+            "database": "default",
+            "username": "default",
+            "enableTls": false,
+            "previewLimit": 50,
+            "driver": "ClickHouse",
+            "name": "parilka"
+        }
+    ]
+}
