@@ -133,7 +133,6 @@ def create_table(client, table_name: str) -> None:
     >>> create_table(client, "my_table")
     """
     # Выполняем запрос на создание таблицы
-    float32_type = "Float32," * 1024
     float32_tuple = ', '.join(['Float32'] * 1024)
     client.command(
         f"""CREATE TABLE IF NOT EXISTS {table_name} (

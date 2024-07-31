@@ -29,20 +29,6 @@ services:
     networks:
       - backend_network
 
-  frontend:
-    build:
-      context: rosdornii-web
-      dockerfile: Dockerfile
-    container_name: frontend
-    command: >
-      bash -c "npm run dev"
-    volumes:
-      - frontend_volume:/app/dist
-    networks:
-      - frontend_network
-    ports:
-      - "3000:3000"
-
   # nginx:
   #   build:
   #     context: .docker/nginx/
@@ -50,7 +36,6 @@ services:
   #   container_name: nginx
   #   volumes:
   #     - /etc/letsencrypt:/etc/letsencrypt
-  #     - frontend_volume:/usr/share/nginx/html
   #   env_file:
   #     - .docker/.env
   #   depends_on:
@@ -60,7 +45,6 @@ services:
   #     - "80:80"
   #     - "443:443"
   #   networks:
-  #     - frontend_network
   #     - backend_network
 
   ch_server:
@@ -119,4 +103,3 @@ networks:
 
 volumes:
   postgres_storage:
-  frontend_volume:

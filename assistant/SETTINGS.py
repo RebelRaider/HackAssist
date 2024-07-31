@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+import os
 HOST = 'ch_server'
 PORT = "8123"
 TABLE_NAME = "Data"
@@ -21,4 +23,5 @@ USER_TOKEN = 2188
 BOT_TOKEN = 12435
 LINEBREAK_TOKEN = 13
 ROLE_TOKENS = {"user": USER_TOKEN, "bot": BOT_TOKEN, "system": SYSTEM_TOKEN}
-TG_TOKEN = "7099242816:AAF9ikXz_DOsP5JzC3SODryNkqic3QFgLUE"
+load_dotenv()
+TG_TOKEN = os.getenv('TG_TOKEN')

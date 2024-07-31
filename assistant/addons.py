@@ -1,6 +1,8 @@
 import torch
 from transformers import AutoModel, AutoTokenizer
 from typing import List, Union
+from typing import Any
+from SETTINGS import ROLE_TOKENS, LINEBREAK_TOKEN
 
 def search_results(connection, table_name: str, vector: list[float], limit: int = 5):
     """
@@ -141,10 +143,6 @@ def load_models(model: str, device: str = "cpu", torch_dtype: str = "auto") -> t
     model = AutoModel.from_pretrained(model, device_map=device, torch_dtype=torch_dtype)
 
     return tokenizer, model
-
-
-from typing import List, Dict, Any
-from SETTINGS import ROLE_TOKENS, LINEBREAK_TOKEN, SYSTEM_PROMPT
 
 
 def get_message_tokens(model: Any, role: str, content: str) -> List[int]:

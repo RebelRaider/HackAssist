@@ -1,6 +1,5 @@
 json = []
 import json as json_lib
-import random
 
 print("Открытие файла")
 with open("db_data/saved.json", encoding="utf-8") as f:

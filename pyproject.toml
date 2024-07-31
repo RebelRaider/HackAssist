@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "fintech"
+name = "HackAssist"
 version = "0.1.0"
 description = ""
-authors = ["kirill <shkolenko02-03-2004@mail.ru>"]
+authors = ["rebelraider <leonid.chesnikov@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -17,8 +17,11 @@ sqlalchemy-utils = "^0.41.2"
 asyncpg = "^0.29.0"
 pytest = "^8.2.0"
 llama-cpp-python = "^0.2.74"
-transformers = "^4.40.2"
-openai-whisper = "^20231117"
+transformers = {extras = ["torch"], version = "^4.43.3"}
+numpy = "<2.0.0"
+python-dotenv = "^1.0.1"
+clickhouse-connect = "^0.7.18"
+beautifulsoup4 = "^4.12.3"
 
 
 [build-system]

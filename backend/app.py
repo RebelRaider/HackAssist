@@ -3,7 +3,7 @@ from routers import upload, index
 from models.database import init_db
 from starlette.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="РОСДОРНИИ")
+app = FastAPI(title="HackAssistBackend")
 app.include_router(index.router, tags=["healcheck"])
 app.include_router(upload.router, prefix="/upload")
 
