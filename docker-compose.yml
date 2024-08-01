@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     depends_on:
-      - postgres
+      - postgres-hack
       - ch_server
     command: >
       bash -c "uvicorn app:app --host 0.0.0.0 --port 8000"
@@ -15,11 +15,11 @@ services:
     ports:
       - "8000:8000"
 
-  postgres:
+  postgres-hack:
     build:
       context: .docker/postgres
       dockerfile: Dockerfile
-    container_name: postgres
+    container_name: postgres-hack
     volumes:
       - postgres_storage:/var/lib/postgresql/data
     env_file:

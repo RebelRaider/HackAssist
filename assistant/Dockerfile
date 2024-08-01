@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN export FORCE_CMAKE=1
 RUN export CMAKE_ARGS=-DLLAMA_CUBLAS=on
 
-RUN CUDACXX=/usr/local/cuda-12/bin/nvcc CMAKE_ARGS="-DLLAMA_CUBLAS=on -DCMAKE_CUDA_ARCHITECTURES=all-major" FORCE_CMAKE=1 pip install llama-cpp-python --upgrade --force-reinstall --no-cache-dir
+RUN pip install llama-cpp-python
 COPY . /app/
 
 CMD ["python3", "Assistant.py"]

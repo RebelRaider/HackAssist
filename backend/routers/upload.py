@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 import requests
 from models.article import Article
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,29 +12,64 @@ import re
 router = APIRouter(tags=["upload"])
 
 
+HABR_START = "https://habr.com"
+PAGE = "/page"
+
+def get_article_data(article_link):
+    try:
+        article_r = requests.get(article_link)
+        article_soup = BeautifulSoup(article_r.content, features="html.parser")
+
+        title = article_soup.find("h1", "tm-article-snippet__title").find("span").getText()
+        content_blocks = article_soup.find_all("div", class_="tm-article-body__block")
+        content = "\n".join([block.get_text(strip=True) for block in content_blocks])
+        summary = content_blocks[0].text.strip() if content_blocks else ""
+
+        return {
+            "title": title,
+            "link": article_link,
+            "summary": summary,
+            "content": content
+        }
+    except Exception as e:
+        print(f"Error parsing article {article_link}: {e}")
+        return None
+
 @router.post("/parse_and_save")
-async def parse_and_save(topic: str, db: AsyncSession = Depends(get_db_connection)):
-    url = f"https://habr.com/ru/search/?q={topic}&target_type=posts&order=relevance"
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise HTTPException(status_code=400, detail="Error fetching data from Habr")
-
-    soup = BeautifulSoup(response.content, "html.parser")
+async def parse_and_save(
+    topic: str, 
+    start_page: int = Query(1, ge=1), 
+    end_page: int = Query(1, ge=1), 
+    db: AsyncSession = Depends(get_db_connection)
+):
     articles = []
+    for page_number in range(start_page, end_page + 1):
+        url = f"https://habr.com/ru/search/?q={topic}&target_type=posts&order=relevance&page={page_number}"
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise HTTPException(status_code=400, detail="Error fetching data from Habr")
 
-    for article in soup.find_all("article", class_="post"):
-        title = article.find("a", class_="post__title_link").text
-        link = article.find("a", class_="post__title_link")["href"]
-        summary = article.find("div", class_="post__text").text.strip()
-        content = ""  # you may want to fetch full content separately
+        soup = BeautifulSoup(response.content, "html.parser")
+        for article in soup.find_all("article", class_="tm-articles-list__item"):
+            title_tag = article.find("a", class_="tm-article-snippet__title-link")
+            if not title_tag:
+                continue
 
-        articles.append(Article(title=title, link=link, summary=summary, content=content))
+            link = "https://habr.com" + title_tag["href"]
+
+            article_data = get_article_data(link)
+            if article_data:
+                articles.append(Article(**article_data))
+
+    if not articles:
+        raise HTTPException(status_code=404, detail="No articles found")
 
     async with db.begin():
         db.add_all(articles)
         await db.commit()
-    
-    return {"message": "Articles parsed and saved successfully"}
+
+    return {"message": f"Articles from page {start_page} to {end_page} parsed and saved successfully"}
+
 
 @router.patch("/update_RAG")
 async def append_to_clickhouse(db: AsyncSession = Depends(get_db_connection)):

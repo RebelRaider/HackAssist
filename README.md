@@ -54,8 +54,7 @@ HackAssist
 ├── clickhouse
 │   ├── .dockerignore
 │   ├── .gitignore
-│   ├── docker-compose.yml
-│   └── requirements.txt
+│   └── docker-compose.yml
 ```
 
 ## Преимущества проекта
@@ -80,7 +79,7 @@ wget https://huggingface.co/IlyaGusev/saiga_mistral_7b_gguf/resolve/main/model-q
 #### Создание файлов среды
 
 1. Создайте файл среды `.env` в директории `assistant/` и заполните его необходимыми переменными окружения, включая `TG_TOKEN`.
-2. Создайте еще один файл `.env` в директорию `backend/configs/` для настройки бэкенда.
+2. Создайте еще один файл `.env` в директорию `.docker/postgres` для настройки базы данных.
 
 #### Выпуск сертификатов для Nginx
 

@@ -11,5 +11,5 @@ def index():
 
 
 @router.get("/healcheck", response_model=StatusCode)
-def index():
+def healcheck():
     return {"code": 200, "status": "OK"}

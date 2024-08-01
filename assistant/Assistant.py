@@ -17,7 +17,7 @@ llm_model = Llama(
 
 async def start(update, context):
     await update.message.reply_text(
-        "Привет! Я бот для анализа данных из ГЭСН. Задайте свой вопрос!"
+        "Привет! Я бот, который помогает участникам и организаторам хакатонов. Задайте свой вопрос!"
     )
 
 
@@ -27,7 +27,7 @@ async def handle_message(update, context):
     context_data = request2similiars(question, tokenizer, model, client, limit=4)
     await context.bot.send_message(
             chat_id=chat_id,
-            text=f"Наиболее сходие документы в базе данных:\n\n{context_data}",
+            text=f"Наиболее схожие документы в базе данных:\n\n{context_data}",
         )
     message = await context.bot.send_message(
         chat_id=chat_id,
